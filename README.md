@@ -19,7 +19,7 @@ Para instalar puedes usar el plugin manager que prefieras. El siguiente ejemplo 
 
 ```lua
 {
-  "frvnzj/xJUSTEXx",
+  "frvnzj/xJUSTEXx.nvim",
   dependencies = {
     "j-hui/fidget.nvim",
   },
