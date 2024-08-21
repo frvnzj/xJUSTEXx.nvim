@@ -6,12 +6,20 @@ Hice este plugin con la idea de facilitar la creación de mis ensayos con LaTeX 
 
 ## Tabla de Contenidos
 
+- [Dependencias](#dependencias)
 - [Instalación](#instalación)
 - [Configuración](#configuración)
 - [Uso](#uso)
 - [Comandos](#comandos)
 - [Opciones de Configuración](#opciones-de-configuración)
 - [Contribuciones](#contribuciones)
+
+## Dependencias
+
++ Git
++ Just
++ fidget.nvim
++ [texclear](https://github.com/LukeSmithxyz/voidrice/blob/master/.local/bin/texclear) (opcional)
 
 ## Instalación
 
