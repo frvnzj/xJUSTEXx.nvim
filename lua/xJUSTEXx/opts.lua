@@ -1,7 +1,10 @@
 local M = {}
 
 M.default_content = {
-  project_dir = vim.fn.expand('$HOME') .. '/Documents/Articles',
+  project_dirs = {
+    vim.fn.expand('$HOME') .. '/Documents/Articles',
+    vim.fn.expand('$HOME') .. '/Documents/Research',
+  },
   tex_content = [[
 \documentclass{article}
 
