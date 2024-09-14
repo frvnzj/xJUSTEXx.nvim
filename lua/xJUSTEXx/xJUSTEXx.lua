@@ -73,7 +73,7 @@ local function create_article_name_prompt(selected_dir, callback)
 
   vim.api.nvim_set_option_value('buftype', 'prompt', { buf = buf })
 
-  vim.fn.prompt_setprompt(buf, 'Name of the article: ')
+  vim.fn.prompt_setprompt(buf, 'Name of the project: ')
 
   vim.cmd('startinsert!')
 
@@ -87,7 +87,63 @@ local function create_article_name_prompt(selected_dir, callback)
   return buf, win
 end
 
-local function setup_project(project_name, project_dir)
+local function create_template_selection_window(templates, callback)
+  local choices = vim.tbl_keys(templates)
+  local width = vim.api.nvim_get_option_value('columns', {})
+  local height = vim.api.nvim_get_option_value('lines', {})
+
+  local win_width = math.ceil(width * 0.4)
+  local win_height = math.max(2, #choices)
+  local row = math.ceil((height - win_height) / 2)
+  local col = math.ceil((width - win_width) / 2)
+
+  local buf = vim.api.nvim_create_buf(false, true)
+  local win = vim.api.nvim_open_win(buf, true, {
+    relative = 'editor',
+    width = win_width,
+    height = win_height,
+    row = row,
+    col = col,
+    style = 'minimal',
+    border = 'rounded',
+    title = 'Select Template',
+    title_pos = 'center',
+  })
+
+  for i, choice in ipairs(choices) do
+    vim.api.nvim_buf_set_lines(
+      buf,
+      i - 1,
+      i,
+      false,
+      { string.format('%d: %s', i, templates[choice].name) }
+    )
+  end
+
+  vim.api.nvim_set_option_value('modifiable', false, { buf = buf })
+
+  vim.api.nvim_buf_set_keymap(buf, 'n', '<CR>', '', {
+    noremap = true,
+    callback = function()
+      local line = vim.fn.line('.')
+      if line >= 1 and line <= #choices then
+        vim.api.nvim_win_close(win, true)
+        callback(choices[line])
+      end
+    end,
+  })
+
+  vim.api.nvim_buf_set_keymap(buf, 'n', '<Esc>', '', {
+    noremap = true,
+    callback = function()
+      vim.api.nvim_win_close(win, true)
+    end,
+  })
+
+  return buf, win
+end
+
+local function setup_project(project_name, project_dir, template_content)
   project_name = project_name:gsub('%s+', '_')
 
   if project_name and project_name ~= '' then
@@ -100,7 +156,7 @@ local function setup_project(project_name, project_dir)
     vim.fn.system('git init')
 
     local main_tex_path = project_path .. '/' .. project_name .. '.tex'
-    vim.fn.writefile(vim.split(config.options.tex_content, '\n'), main_tex_path)
+    vim.fn.writefile(vim.split(template_content, '\n'), main_tex_path)
 
     vim.cmd('edit ' .. main_tex_path)
 
@@ -116,18 +172,23 @@ end
 
 function M.create_tex_project_article()
   local project_dirs = config.options.project_dirs
+  local tex_templates = config.options.tex_templates
 
   if #project_dirs == 0 then
     vim.notify('No project directories defined', vim.log.levels.INFO)
     return
   elseif #project_dirs == 1 then
-    create_article_name_prompt(project_dirs[1], function(project_name)
-      setup_project(project_name, project_dirs[1])
+    create_template_selection_window(tex_templates, function(template_key)
+      create_article_name_prompt(project_dirs[1], function(project_name)
+        setup_project(project_name, project_dirs[1], tex_templates[template_key].content)
+      end)
     end)
   else
     create_directory_selection_window(project_dirs, function(selected_dir)
-      create_article_name_prompt(selected_dir, function(project_name)
-        setup_project(project_name, selected_dir)
+      create_template_selection_window(tex_templates, function(template_key)
+        create_article_name_prompt(selected_dir, function(project_name)
+          setup_project(project_name, selected_dir, tex_templates[template_key].content)
+        end)
       end)
     end)
   end

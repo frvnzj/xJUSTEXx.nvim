@@ -42,24 +42,87 @@ Para instalar puedes usar el plugin manager que prefieras. El siguiente ejemplo 
 
 ## Configuración / Configuration
 
-La configuración tiene tres opciones (directorio de los proyectos, plantilla o contenido con el que se iniciará el tex main y el contenido del .justfile que declara los comandos a usar). Las opciones por default son las siguientes:
+La configuración tiene tres opciones (definición de los directorios de los proyectos, plantillas o contenidos con el que se iniciará el main tex y el contenido del .justfile que declara los comandos a usar). Las opciones por default son las siguientes:
 
-The configuration have three options (project directories, template for main.tex and the content of .justfile with the commands for compile). The default setup is:
+The configuration have three options (project directories, templates for main tex and the content of .justfile with the commands for compile). The default setup is:
 
 ```lua
 {
-    project_dirs = { -- before init project you can choose the directory root
-        vim.fn.expand('$HOME') .. '/Documents/Articles', -- use this format of expand
-        vim.fn.expand('$HOME') .. '/Documents/Research',
-    },
-    tex_content = [[
+  project_dirs = {
+    vim.fn.expand('$HOME') .. '/Documents/Articles',
+    vim.fn.expand('$HOME') .. '/Documents/Research',
+  },
+  tex_templates = {
+    article = {
+      name = 'Article',
+      content = [[
 \documentclass{article}
+
 
 \begin{document}
 
+\title{Title}
+\author{Author}
+\date{\today}
+\maketitle
+
+
+\section{Introduction}
+
+This is an article template.
+
+
 \end{document}
-]],
-    justfile_content = [[
+      ]],
+    },
+    book = {
+      name = 'Book',
+      content = [[
+\documentclass{book}
+
+
+\begin{document}
+
+\title{Title}
+\author{Author}
+\date{\today}
+\maketitle
+
+
+\chapter{Introduction}
+
+This is a book template.
+
+
+\end{document}
+      ]],
+    },
+    presentation = {
+      name = 'Presentation',
+      content = [[
+\documentclass{beamer}
+
+
+\begin{document}
+\title{Title}
+\author{Author}
+\date{\today}
+\frame{\titlepage}
+
+
+\begin{frame}
+\frametitle{Introduction}
+
+This is a presentation template.
+
+\end{frame}
+
+
+\end{document}
+      ]],
+    },
+  },
+  justfile_content = [[
 main_file := "%s.tex"
 
 lualatex:
@@ -121,7 +184,10 @@ You can change the default configuration, for example, I set my own template and
 
 ```lua
 require("xJUSTEXx").setup {
-    tex_content = [[
+    tex_templates = {
+      article = {
+        name = "Article",
+        content = [[
 \documentclass[doc,12pt]{apa7}
 
 % Font option: Arial[Arial], Carlito[Carlito], Droid Serif[Droid],
@@ -159,13 +225,32 @@ require("xJUSTEXx").setup {
 % ----- Bibliografía -----
 % \printbibliography
 \end{document}
-]],
+        ]],
+      },
+    },
     project_dirs = {
       vim.fn.expand "$HOME" .. "/Documentos/Ensayos",
       vim.fn.expand "$HOME" .. "/Documentos/Research",
     },
 }
 ```
+
+También puedes definir tu propia plantilla siguiendo la tabla de ```tex_templates```:
+
+Also you can define your own template following the table of ```tex_templates```:
+
+```lua
+tex_templates = {
+    myTemplate = {
+        name = 'MyTemplate',
+        content = [[
+This is MyTemplate
+        ]],
+    },
+},
+```
+
+---
 
 ![xJUSTEXx](assets/xJUSTEXx.png)
 
