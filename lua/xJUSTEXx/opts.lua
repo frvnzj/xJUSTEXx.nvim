@@ -87,8 +87,11 @@ pdflatex:
 pdfxe:
   @latexmk -pdfxe -interaction=nonstopmode -synctex=-1 {{main_file}} 
 
-clean:
-  @texclear {{main_file}} 
+cleanmain:
+  @latexmk -c {{main_file}}
+
+cleanall:
+  @latexmk -c
 ]],
 }
 
