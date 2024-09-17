@@ -134,8 +134,11 @@ pdflatex:
 pdfxe:
   @latexmk -pdfxe -interaction=nonstopmode -synctex=-1 {{main_file}}
 
-clean:
-  @texclear {{main_file}}
+cleanmain:
+  @latexmk -c {{main_file}}
+
+cleanall:
+  @latexmk -c
 ]],
 }
 ```
@@ -266,7 +269,8 @@ wk.add {
   { "<leader>wa", "<cmd>Justex lualatex<cr>", desc = "xJAVx LuaLaTeX", icon = { icon = "", color = "azure" }, },
   { "<leader>wb", "<cmd>Justex pdflatex<cr>", desc = "xJAVx LaTeX", icon = { icon = "", color = "azure" }, },
   { "<leader>wc", "<cmd>Justex pdfxe<cr>", desc = "xJAVx XeLaTeX", icon = { icon = "", color = "azure" }, },
-  { "<leader>wd", "<cmd>Justex clean<cr>", desc = "xJAVx CleanAuxFiles", icon = { icon = "", color = "azure" }, },
+  { "<leader>wd", "<cmd>Justex cleanmain<cr>", desc = "xJAVx CleanMainAuxFiles", icon = { icon = "", color = "azure" }, },
+  { "<leader>we", "<cmd>Justex cleanall<cr>", desc = "xJAVx CleanAllFilesAux", icon = { icon = "", color = "azure" }, },
 }
 
 -- Estos keymaps permiten ir rápidamente a los sitios que quiero modificar,
